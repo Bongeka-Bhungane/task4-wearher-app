@@ -8,4 +8,59 @@ body,
 #root {
   width: 100%;
   height: 100%;
+  color: aliceblue;
+}
+
+.app {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background: #0C121D;
+  flex-direction: row;
+  gap: 10px;
+  padding: 10px;
+}
+
+.side-bar {
+  height: 100%;
+  width: 20%;
+  background: #1E2A3A;
+}
+.content {
+  height: 100%;
+  width: 50%;
+  background: #1E2A3A;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+.forecast {
+  height: 100%;
+  width: 30%;
+  background: #1E2A3A;
+}
+
+.search {
+  height: 5%;
+  width: 100%;
+  background: #73757a;
+}
+
+.city {
+  height: 20%;
+  width: 100%;
+  background: #62708b;
+}
+
+.daily-forecast {
+  height: 30%;
+  width: 100%;
+  background: #284d91;
+}
+
+.air-conditions {
+  height: 40%;
+  width: 100%;
+  background: #acb9ca;
 }
