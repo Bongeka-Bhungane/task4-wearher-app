@@ -1,5 +1,5 @@
 import React from 'react'
-import Text from './text'
+import Text from './Text'
 
 export default function Nav() {
   return (
@@ -10,6 +10,7 @@ export default function Nav() {
       >Menu</Text>
 
       <ul>
+        <li><Text variant='a' className='sidebar-link'>Home</Text></li>
         <li><Text variant='a' className='sidebar-link'>Cities</Text></li>
         <li><Text variant='a' className='sidebar-link'>Hourly forecast</Text></li>
         <li><Text variant='a' className='sidebar-link'>Settings</Text></li>
