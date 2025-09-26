@@ -7,7 +7,7 @@ import SavedLocations from "./components/SavedLocations";
 import Settings from "./components/Settings";
 import Notification from "./components/Notification";
 import Header from "./components/Header";
-import TemperatureSearch from "./components/FetchData";
+import WeatherApp from "./components/FetchData";
 import {
   fetchCurrentWeather,
   fetchForecast,
@@ -141,7 +141,7 @@ const App: React.FC = () => {
     >
       <Header />
       <Sidebar />
-      <TemperatureSearch />
+      <WeatherApp />
       <Notification message={notification} />
       <SearchBar onSearch={handleSearch} />
       <Settings

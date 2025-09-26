@@ -79,6 +79,7 @@ body,
   gap: 20px;
 }
 
-.nav a {
-  
+a:hover{
+  cursor: pointer;
+  color: palevioletred;
 }
