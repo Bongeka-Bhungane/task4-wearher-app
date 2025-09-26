@@ -2,21 +2,32 @@ import React from "react";
 import type { WeatherData } from "../types";
 
 interface Props {
-  weather: WeatherData;
+  weather: WeatherData & { date?: string }; // allow date
   units: "metric" | "imperial";
 }
 
-const WeatherCard: React.FC<Props> = ({ weather, units }) => (
-  <div className="weather-card">
-    <h2 className="weather-description">{weather.description}</h2>
-    <p className="weather-temp">
-      {weather.temperature}°{units === "metric" ? "C" : "F"}
-    </p>
-    <p className="weather-humidity">Humidity: {weather.humidity}%</p>
-    <p className="weather-wind">
-      Wind: {weather.windSpeed} {units === "metric" ? "km/h" : "mph"}
-    </p>
-  </div>
-);
+const WeatherCard: React.FC<Props> = ({ weather, units }) => {
+  const dayName = weather.date
+    ? new Date(weather.date).toLocaleDateString(undefined, { weekday: "short" })
+    : "";
+
+  return (
+    <div className="weather-card">
+      {dayName && <p className="weather-day">{dayName}</p>}
+      <h2 className="weather-description">{weather.description}</h2>
+      <p className="weather-temp">
+        {weather.temperature}°{units === "metric" ? "C" : "F"}
+      </p>
+      {weather.humidity !== undefined && (
+        <p className="weather-humidity">Humidity: {weather.humidity}%</p>
+      )}
+      {weather.windSpeed !== undefined && (
+        <p className="weather-wind">
+          Wind: {weather.windSpeed} {units === "metric" ? "km/h" : "mph"}
+        </p>
+      )}
+    </div>
+  );
+};
 
 export default WeatherCard;

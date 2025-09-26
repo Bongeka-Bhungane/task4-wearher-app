@@ -180,3 +180,50 @@ body,
 .forecast-toggle button.active {
   background-color: rgba(255,255,255,0.3);
 }
+
+.weather-card {
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  text-align: center;
+  min-width: 120px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin: 0.5rem;
+  color: #000;
+}
+
+.weather-day {
+  font-weight: bold;
+  margin-bottom: 0.3rem;
+}
+
+.weather-description {
+  font-size: 1.2rem;
+  margin: 0.3rem 0;
+}
+
+.weather-temp {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0.3rem 0;
+}
+
+.weather-humidity,
+.weather-wind {
+  margin: 0.2rem 0;
+  font-size: 0.9rem;
+}
+
+[data-theme="dark"] .weather-card {
+  background-color: #2a2a2a;
+  color: #f0f0f0;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .weather-day,
+[data-theme="dark"] .weather-description,
+[data-theme="dark"] .weather-temp,
+[data-theme="dark"] .weather-humidity,
+[data-theme="dark"] .weather-wind {
+  color: #f0f0f0;
+}

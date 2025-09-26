@@ -1,12 +1,7 @@
 import React, { useState, useEffect } from "react";
 import SavedLocations from "./SavedLocations";
-import type { Location } from "../types";
-
-interface WeatherData {
-  temperature: number;
-  windspeed: number;
-  weathercode: number;
-}
+import WeatherCard from "./WeatherCard";
+import type { Location, DailyWeatherData } from "../types";
 
 interface Coordinates {
   latitude: number;
@@ -14,14 +9,15 @@ interface Coordinates {
 }
 
 const WeatherApp: React.FC = () => {
-  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [dailyWeather, setDailyWeather] = useState<DailyWeatherData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [city, setCity] = useState("");
   const [coords, setCoords] = useState<Coordinates | null>(null);
-  const [currentCity, setCurrentCity] = useState(""); // store city name
+  const [currentCity, setCurrentCity] = useState("");
   const [savedLocations, setSavedLocations] = useState<Location[]>([]);
 
+  // Map weather codes to emojis
   const weatherCodeToEmoji = (code: number) => {
     switch (code) {
       case 0:
@@ -41,7 +37,7 @@ const WeatherApp: React.FC = () => {
     }
   };
 
-  const fetchWeather = async (
+  const fetchDailyWeather = async (
     latitude: number,
     longitude: number,
     name?: string
@@ -49,18 +45,29 @@ const WeatherApp: React.FC = () => {
     try {
       setLoading(true);
       setError("");
-      const response = await fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`
-      );
+
+      // Open-Meteo daily forecast API
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`;
+      const response = await fetch(url);
       const data = await response.json();
-      if (data.current_weather) {
-        setWeather(data.current_weather);
-        if (name) setCurrentCity(name); // update city name
+
+      if (data.daily) {
+        const dailyData: DailyWeatherData[] = data.daily.time.map(
+          (date: string, i: number) => ({
+            date,
+            temperatureMax: data.daily.temperature_2m_max[i],
+            temperatureMin: data.daily.temperature_2m_min[i],
+            weatherCode: data.daily.weathercode[i],
+          })
+        );
+
+        setDailyWeather(dailyData);
+        if (name) setCurrentCity(name);
       } else {
-        setError("Weather data not found");
+        setError("Daily weather data not found");
       }
     } catch {
-      setError("Failed to fetch weather data");
+      setError("Failed to fetch daily weather data");
     } finally {
       setLoading(false);
     }
@@ -76,11 +83,13 @@ const WeatherApp: React.FC = () => {
         )}&count=1`
       );
       const data = await response.json();
+
       if (data.results && data.results.length > 0) {
         const { latitude, longitude, name } = data.results[0];
         setCoords({ latitude, longitude });
-        fetchWeather(latitude, longitude, name);
+        fetchDailyWeather(latitude, longitude, name);
 
+        // Save location
         const newLocation: Location = { name, lat: latitude, lon: longitude };
         setSavedLocations((prev) => {
           const exists = prev.some((l) => l.name === name);
@@ -112,11 +121,9 @@ const WeatherApp: React.FC = () => {
         (position) => {
           const { latitude, longitude } = position.coords;
           setCoords({ latitude, longitude });
-          fetchWeather(latitude, longitude, "Current Location");
+          fetchDailyWeather(latitude, longitude, "Current Location");
         },
-        () => {
-          setError("Unable to retrieve your location");
-        }
+        () => setError("Unable to retrieve your location")
       );
     }
   }, [coords]);
@@ -131,7 +138,7 @@ const WeatherApp: React.FC = () => {
 
   const handleSelectSaved = (loc: Location) => {
     setCoords({ latitude: loc.lat, longitude: loc.lon });
-    fetchWeather(loc.lat, loc.lon, loc.name);
+    fetchDailyWeather(loc.lat, loc.lon, loc.name);
   };
 
   const handleRemove = (name: string) => {
@@ -163,16 +170,24 @@ const WeatherApp: React.FC = () => {
       {loading && <p>Loading weather...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {weather && coords && (
+      {dailyWeather.length > 0 && (
         <>
           <p>City: {currentCity}</p>
-          <p>
-            Coordinates: {coords.latitude.toFixed(2)},{" "}
-            {coords.longitude.toFixed(2)}
-          </p>
-          <p>Temperature: {weather.temperature}°C</p>
-          <p>Wind Speed: {weather.windspeed} km/h</p>
-          <p>Condition: {weatherCodeToEmoji(weather.weathercode)}</p>
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+            {dailyWeather.map((day) => (
+              <WeatherCard
+                key={day.date}
+                weather={{
+                  description: weatherCodeToEmoji(day.weatherCode),
+                  temperature: day.temperatureMax,
+                  humidity: 0, // optional
+                  windSpeed: 0, // optional
+                  date: day.date, // pass the date
+                }}
+                units="metric"
+              />
+            ))}
+          </div>
 
           <SavedLocations
             locations={savedLocations}
