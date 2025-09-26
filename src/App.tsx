@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import SearchBar from "./components/SearchBar";
 import WeatherCard from "./components/WeatherCard";
 import ForecastCard from "./components/ForecastCard";
@@ -18,6 +18,7 @@ const App: React.FC = () => {
   );
   const [units, setUnits] = useState<"metric" | "imperial">("metric");
 
+  // Load from localStorage once
   useEffect(() => {
     const saved = localStorage.getItem("weatherApp");
     if (saved) {
@@ -27,18 +28,23 @@ const App: React.FC = () => {
     }
   }, []);
 
+  // ✅ Memoize loadWeather
+  const loadWeather = useCallback(
+    async (location: Location) => {
+      const weather = await fetchCurrentWeather(location, units);
+      const forecastData = await fetchForecast(location, units);
+      setCurrentWeather(weather);
+      setForecast(forecastData);
+    },
+    [units] // depends only on units
+  );
+
+  // Effect depends on loadWeather + selectedLocation
   useEffect(() => {
     if (selectedLocation) {
       loadWeather(selectedLocation);
     }
-  }, [selectedLocation, units]);
-
-  const loadWeather = async (location: Location) => {
-    const weather = await fetchCurrentWeather(location, units);
-    const forecastData = await fetchForecast(location, units);
-    setCurrentWeather(weather);
-    setForecast(forecastData);
-  };
+  }, [selectedLocation, loadWeather]);
 
   const handleSearch = (location: Location) => {
     setSelectedLocation(location);
