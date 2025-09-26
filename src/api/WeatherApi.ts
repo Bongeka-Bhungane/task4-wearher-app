@@ -45,3 +45,20 @@ export const fetchForecast = async (
     icon: item.weather[0].icon,
   }));
 };
+
+export const fetchHourlyForecast = async (
+  location: Location,
+  units = "metric"
+): Promise<HourlyForecastData[]> => {
+  const res = await fetch(
+    `https://api.openweathermap.org/data/2.5/forecast?lat=${location.lat}&lon=${location.lon}&units=${units}&appid=${API_KEY}`
+  );
+  const data = await res.json();
+  // Return hourly forecasts for next 8 periods (~24h)
+  return data.list.slice(0, 8).map((item: any) => ({
+    time: item.dt_txt.split(" ")[1].slice(0, 5),
+    temp: Math.round(item.main.temp),
+    description: item.weather[0].description,
+    icon: item.weather[0].icon,
+  }));
+};

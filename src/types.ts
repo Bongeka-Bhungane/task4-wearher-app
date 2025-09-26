@@ -1,7 +1,9 @@
+// types.ts
 export interface Location {
   name: string;
   lat: number;
   lon: number;
+  isCurrentLocation?: boolean; // optional property
 }
 
 export interface WeatherData {
@@ -14,6 +16,13 @@ export interface WeatherData {
 
 export interface ForecastData {
   date: string;
+  temp: number;
+  description: string;
+  icon: string;
+}
+
+export interface HourlyForecastData {
+  time: string;
   temp: number;
   description: string;
   icon: string;
