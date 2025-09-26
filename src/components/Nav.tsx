@@ -1,9 +1,13 @@
 import React from 'react'
+import Header from "./Header";
 import Text from './Text'
+import '../App.css'
 
 export default function Nav() {
   return (
     <div className='nav'>
+      
+            <Header />
       <Text
       variant='h1'
       className='sidebar-heading'
@@ -11,10 +15,10 @@ export default function Nav() {
 
       <ul>
         <li><Text variant='a' className='sidebar-link'>Home</Text></li>
-        <li><Text variant='a' className='sidebar-link'>Cities</Text></li>
+        <li><Text variant='a' className='sidebar-link'>saved locations</Text></li>
         <li><Text variant='a' className='sidebar-link'>Hourly forecast</Text></li>
         <li><Text variant='a' className='sidebar-link'>Settings</Text></li>
-        <li><Text variant='a' className='sidebar-link'>About</Text></li>
+        <li><Text variant='a' className='sidebar-link'>Notifications</Text></li>
       </ul>
 
     </div>

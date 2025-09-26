@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
-import Sidebar from "./components/Sidebar";
 import WeatherCard from "./components/WeatherCard";
 import ForecastCard from "./components/ForecastCard";
 import Settings from "./components/Settings";
 import Notification from "./components/Notification";
-import Header from "./components/Header";
 import WeatherApp from "./components/FetchData";
+import Nav from "./components/Nav";
 import type {
   WeatherData,
   ForecastData,
@@ -140,36 +139,45 @@ const App: React.FC = () => {
 
   return (
     <div className={`app-container ${theme}`}>
-      <Header />
-      <Sidebar />
-      <WeatherApp />
-      <Notification message={notification} />
-      <Settings
-        theme={theme}
-        units={units}
-        setTheme={setTheme}
-        setUnits={setUnits}
-      />
-
-      {currentWeather && <WeatherCard weather={currentWeather} units={units} />}
-
-      <div className="forecast-toggle">
-        <button
-          onClick={() => setView("daily")}
-          className={view === "daily" ? "active" : ""}
-        >
-          Daily
-        </button>
-        <button
-          onClick={() => setView("hourly")}
-          className={view === "hourly" ? "active" : ""}
-        >
-          Hourly
-        </button>
+      <div className={`nav-container ${theme}`}>
+        <Nav />
       </div>
 
-      <ForecastCard daily={dailyForecast} hourly={hourlyForecast} view={view} />
+      <div className={`app-content ${theme}`}>
+        <WeatherApp />
+        <Notification message={notification} />
+        <Settings
+          theme={theme}
+          units={units}
+          setTheme={setTheme}
+          setUnits={setUnits}
+        />
 
+        {currentWeather && (
+          <WeatherCard weather={currentWeather} units={units} />
+        )}
+
+        <div className="forecast-toggle">
+          <button
+            onClick={() => setView("daily")}
+            className={view === "daily" ? "active" : ""}
+          >
+            Daily
+          </button>
+          <button
+            onClick={() => setView("hourly")}
+            className={view === "hourly" ? "active" : ""}
+          >
+            Hourly
+          </button>
+        </div>
+
+        <ForecastCard
+          daily={dailyForecast}
+          hourly={hourlyForecast}
+          view={view}
+        />
+      </div>
     </div>
   );
 };

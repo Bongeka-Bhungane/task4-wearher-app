@@ -149,7 +149,6 @@ const WeatherApp: React.FC = () => {
 
   return (
     <div style={{ padding: "1rem", fontFamily: "sans-serif" }}>
-      <h1>Weather App</h1>
 
       <form onSubmit={handleSearch} style={{ marginBottom: "1rem" }}>
         <input
@@ -180,9 +179,9 @@ const WeatherApp: React.FC = () => {
                 weather={{
                   description: weatherCodeToEmoji(day.weatherCode),
                   temperature: day.temperatureMax,
-                  humidity: 0, // optional
-                  windSpeed: 0, // optional
-                  date: day.date, // pass the date
+                  humidity: 0, 
+                  windSpeed: 0, 
+                  date: day.date, 
                 }}
                 units="metric"
               />
