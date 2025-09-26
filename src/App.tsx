@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./App.css";
 import Sidebar from "./components/Sidebar";
 import SearchBar from "./components/SearchBar";
 import WeatherCard from "./components/WeatherCard";
