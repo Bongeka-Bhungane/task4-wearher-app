@@ -1,7 +1,7 @@
 import React from "react";
 
 type props = {
-  variant?: string;
+  variant: string;
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
