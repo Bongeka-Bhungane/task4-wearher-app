@@ -111,3 +111,72 @@ body,
   border-color: rgba(0,0,0,0.4);
   box-shadow: 0 0 4px rgba(0,0,0,0.1);
 }
+
+.weather-card {
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-align: center;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.weather-card:hover {
+  transform: translateY(-2px);
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.weather-description {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.weather-temp {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.weather-humidity,
+.weather-wind {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.app-container {
+  min-height: 100vh;
+  padding: 1rem;
+  font-family: sans-serif;
+}
+
+.app-container.light {
+  background-color: #dbeafe;
+  color: #111;
+}
+
+.app-container.dark {
+  background-color: #111827;
+  color: #fff;
+}
+
+.forecast-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.forecast-toggle button {
+  padding: 0.5rem 1rem;
+  margin: 0 0.25rem;
+  border-radius: 6px;
+  border: none;
+  background-color: rgba(255,255,255,0.1);
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.forecast-toggle button.active {
+  background-color: rgba(255,255,255,0.3);
+}
