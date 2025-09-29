@@ -37,7 +37,7 @@ export const convertTemperature = (
 ): number => {
   if (from === to) return temp;
   return from === "metric"
-    ? (temp * 9) / 5 + 32 
+    ? (temp * 9) / 5 + 32 // Celsius → Fahrenheit
     : ((temp - 32) * 5) / 9; 
 };
 

@@ -11,19 +11,52 @@ export interface WeatherData {
   description: string;
   humidity: number;
   windSpeed: number;
-  icon: string;
+  icon?: string;
 }
 
 export interface ForecastData {
   date: string;
-  temp: number;
+  temp: number; 
+  tempMax?: number; 
+  tempMin?: number; 
   description: string;
-  icon: string;
+  weatherCode: number;
+  humidity?: number;
+  windSpeed?: number;
 }
 
+
 export interface HourlyForecastData {
+  date: string;
   time: string;
-  temp: number;
+  temp: number; 
   description: string;
-  icon: string;
+  weatherCode: number;
+  humidity?: number;
+  windSpeed?: number;
+}
+
+
+
+export interface ApiDaily {
+  dt: number;
+  temp: { day: number };
+  weather: { description: string; icon: string }[];
+}
+
+export interface ApiHourly {
+  dt: number;
+  temp: number;
+  weather: { description: string; icon: string }[];
+}
+
+interface HourlyForecastItem {
+  dt_txt: string;
+  main: {
+    temp: number;
+  };
+  weather: {
+    description: string;
+    icon: string;
+  }[];
 }

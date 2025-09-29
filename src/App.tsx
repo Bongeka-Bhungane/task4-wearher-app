@@ -5,13 +5,14 @@ import ForecastCard from "./components/ForecastCard";
 import Settings from "./components/Settings";
 import Notification from "./components/Notification";
 import WeatherApp from "./components/FetchData";
-import Nav from "./components/Nav";
 import Header from "./components/Header";
 import type {
   WeatherData,
   ForecastData,
   Location,
   HourlyForecastData,
+  ApiDaily,
+  ApiHourly,
 } from "./types";
 
 const App: React.FC = () => {
@@ -86,21 +87,20 @@ const App: React.FC = () => {
       };
 
       // Daily forecast
-      const daily: ForecastData[] = data.daily.map((d: any) => ({
-        date: new Date(d.dt * 1000).toISOString(), // convert timestamp to date
-        temp: d.temp.day,
-        description: d.weather[0].description,
-      }));
+    const daily: ForecastData[] = data.daily.map((d: ApiDaily) => ({
+      date: new Date(d.dt * 1000).toISOString(),
+      temperature: d.temp.day,
+      description: d.weather[0].description,
+      icon: d.weather[0].icon,
+    }));
 
-      // Hourly forecast
-      const hourly: HourlyForecastData[] = data.hourly.map((h: any) => ({
-        time: new Date(h.dt * 1000).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        temp: h.temp,
-        description: h.weather[0].description,
-      }));
+    const hourly: HourlyForecastData[] = data.hourly.map((h: ApiHourly) => ({
+      time: new Date(h.dt * 1000).toLocaleTimeString(),
+      temperature: h.temp,
+      description: h.weather[0].description,
+      icon: h.weather[0].icon,
+    }));
+
 
       setCurrentWeather(current);
       setDailyForecast(daily);
@@ -143,7 +143,9 @@ const App: React.FC = () => {
 
   return (
     <div className={`app-container ${theme}`}>
+      <div className="nav-container">
         <Header />
+      </div>
 
       <div className={`app-content ${theme}`}>
         <WeatherApp />

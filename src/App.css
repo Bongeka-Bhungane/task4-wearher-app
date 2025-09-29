@@ -30,7 +30,10 @@ body,
   color: #fff;
 }
 
-
+.nav-container {
+  gap: 10px;
+  display: flex;
+}
 
 .app-content{
   display: flex;
@@ -63,8 +66,8 @@ body,
 .notification {
   margin-bottom: 1rem;
   padding: 0.75rem 1rem;
-  background-color: rgba(72, 187, 120, 0.2); /* light green background */
-  color: #2f855a; /* green text */
+  background-color: rgba(72, 187, 120, 0.2); 
+  color: #2f855a; 
   border-radius: 8px;
   text-align: center;
   font-weight: 500;
