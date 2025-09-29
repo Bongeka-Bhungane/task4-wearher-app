@@ -19,6 +19,7 @@ export default function Nav() {
         <li><Text variant='a' className='sidebar-link'>Hourly forecast</Text></li>
         <li><Text variant='a' className='sidebar-link'>Settings</Text></li>
         <li><Text variant='a' className='sidebar-link'>Notifications</Text></li>
+        <li><Text variant='a' className='sidebar-link'>Privacy Policies </Text></li>
       </ul>
 
     </div>

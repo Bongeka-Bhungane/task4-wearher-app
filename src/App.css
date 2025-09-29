@@ -270,3 +270,53 @@ body,
 [data-theme="dark"] .weather-wind {
   color: #f0f0f0;
 }
+
+/* Forecast grid layout */
+.forecast-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.forecast-grid.daily {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.forecast-grid.hourly {
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+}
+
+/* Forecast card item */
+.forecast-item {
+  padding: 0.75rem;
+  border-radius: 8px;
+  background-color: #ffffff;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.forecast-item:hover {
+  background-color: #f0f0f0;
+}
+
+.forecast-temp {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* Dark mode */
+[data-theme="dark"] .forecast-item {
+  background-color: #2a2a2a;
+  color: #f0f0f0;
+  box-shadow: 0 2px 6px rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .forecast-item:hover {
+  background-color: #333;
+}
+
+.city {
+  font-weight: 400;
+  font-size: larger;
+}

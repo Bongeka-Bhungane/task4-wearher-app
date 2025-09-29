@@ -1,6 +1,7 @@
 import React from "react";
 import type { ForecastData, HourlyForecastData } from "../types";
 
+
 interface Props {
   daily?: ForecastData[];
   hourly?: HourlyForecastData[];
@@ -10,12 +11,12 @@ interface Props {
 const ForecastCard: React.FC<Props> = ({ daily, hourly, view }) => {
   if (view === "daily" && daily)
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-4">
+      <div className="forecast-grid daily">
         {daily.map((day, i) => (
-          <div key={i} className="p-2 rounded bg-white/10 text-center">
+          <div key={i} className="forecast-item">
             <p>{new Date(day.date).toLocaleDateString()}</p>
             <p>{day.description}</p>
-            <p className="font-bold">{day.temp}°</p>
+            <p className="forecast-temp">{day.temp}°</p>
           </div>
         ))}
       </div>
@@ -23,12 +24,12 @@ const ForecastCard: React.FC<Props> = ({ daily, hourly, view }) => {
 
   if (view === "hourly" && hourly)
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 mb-4">
+      <div className="forecast-grid hourly">
         {hourly.map((hour, i) => (
-          <div key={i} className="p-2 rounded bg-white/10 text-center">
+          <div key={i} className="forecast-item">
             <p>{hour.time}</p>
             <p>{hour.description}</p>
-            <p className="font-bold">{hour.temp}°</p>
+            <p className="forecast-temp">{hour.temp}°</p>
           </div>
         ))}
       </div>

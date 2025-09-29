@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../App.css";
 import SavedLocations from "./SavedLocations";
 import WeatherCard from "./WeatherCard";
 import type { Location, DailyWeatherData } from "../types";
@@ -17,23 +18,75 @@ const WeatherApp: React.FC = () => {
   const [currentCity, setCurrentCity] = useState("");
   const [savedLocations, setSavedLocations] = useState<Location[]>([]);
 
-  // Map weather codes to emojis
-  const weatherCodeToEmoji = (code: number) => {
+  const weatherCodeToEmoji = (code: number): string => {
     switch (code) {
       case 0:
-        return "☀️";
+        return "☀️ sunny";
+
       case 1:
-        return "🌤️";
+        return "🌤️ partly cloudy";
       case 2:
-        return "⛅";
+        return "⛅ partly sunny";
       case 3:
-        return "☁️";
+        return "☁️ cloudy";
+
+      case 45:
+      case 48:
+        return "🌫️ foggy";
+
+      case 51:
+      case 53:
+      case 55:
+        return "🌦️ drizzly";
+
+      case 56:
+      case 57:
+        return "🌨️ drizzly";
+
       case 61:
-        return "🌧️";
+        return "🌧️ slightly rainy";
+        
+      case 63:
+        return "🌧️ modirately rainy";
+
+      case 65:
+        return "🌧️ haevy rain";
+
+      case 66:
+      case 67:
+        return "🌨️ freezing rain";
+
       case 71:
-        return "❄️";
+        return "❄️ light snow";
+      case 73:
+        return "❄️ modirate snow";
+      case 75:
+        return "❄️ heavy snow";
+
+      case 77:
+        return "🌨️ snow grains";
+
+      case 80:
+        return "🌦️ slight showers";
+      case 81:
+        return "🌧️ moderate showers";
+      case 82:
+        return "⛈️ violent showers";
+
+      case 85:
+        return "🌨️ snow showers";
+      case 86:
+        return "❄️ heavy snow showers";
+
+      case 95:
+        return "⛈️ thunderstorm";
+
+      case 96:
+      case 99:
+        return "🌩️ thunderstorm with hail";
+
       default:
-        return "🌈";
+        return "unknown weather";
     }
   };
 
@@ -149,7 +202,6 @@ const WeatherApp: React.FC = () => {
 
   return (
     <div style={{ padding: "1rem", fontFamily: "sans-serif" }}>
-
       <form onSubmit={handleSearch} style={{ marginBottom: "1rem" }}>
         <input
           type="text"
@@ -171,7 +223,7 @@ const WeatherApp: React.FC = () => {
 
       {dailyWeather.length > 0 && (
         <>
-          <p>City: {currentCity}</p>
+          <h3 className="city">{currentCity}</h3>
           <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
             {dailyWeather.map((day) => (
               <WeatherCard
@@ -179,9 +231,10 @@ const WeatherApp: React.FC = () => {
                 weather={{
                   description: weatherCodeToEmoji(day.weatherCode),
                   temperature: day.temperatureMax,
-                  humidity: 0, 
-                  windSpeed: 0, 
-                  date: day.date, 
+                  humidity: 0,
+                  windSpeed: 0,
+                  icon: "",
+                  date: day.date,
                 }}
                 units="metric"
               />

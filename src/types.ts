@@ -3,7 +3,7 @@ export interface Location {
   name: string;
   lat: number;
   lon: number;
-  isCurrentLocation?: boolean; // optional property
+  isCurrentLocation?: boolean; 
 }
 
 export interface WeatherData {

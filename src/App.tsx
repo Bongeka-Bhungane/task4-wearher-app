@@ -21,10 +21,10 @@ const App: React.FC = () => {
   const [hourlyForecast, setHourlyForecast] = useState<HourlyForecastData[]>(
     []
   );
-  
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     null
   );
+
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [units, setUnits] = useState<"metric" | "imperial">("metric");
   const [notification, setNotification] = useState("");
@@ -58,7 +58,7 @@ const App: React.FC = () => {
     }
   }, []);
 
-  // Fetch weather from new API
+  // Fetch weather from API
   const fetchWeather = async (loc: Location) => {
     try {
       setNotification("Loading weather...");
@@ -76,7 +76,7 @@ const App: React.FC = () => {
       const data = await response.json();
       console.log(data);
 
-
+      // Current weather
       const current: WeatherData = {
         temperature: data.current.temp,
         windSpeed: data.current.wind_speed,
@@ -84,15 +84,20 @@ const App: React.FC = () => {
         description: data.current.weather[0].description,
       };
 
+      // Daily forecast
       const daily: ForecastData[] = data.daily.map((d: any) => ({
-        date: d.dt,
-        temperature: d.temp.day,
+        date: new Date(d.dt * 1000).toISOString(), // convert timestamp to date
+        temp: d.temp.day,
         description: d.weather[0].description,
       }));
 
+      // Hourly forecast
       const hourly: HourlyForecastData[] = data.hourly.map((h: any) => ({
-        time: h.dt,
-        temperature: h.temp,
+        time: new Date(h.dt * 1000).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        temp: h.temp,
         description: h.weather[0].description,
       }));
 
@@ -134,8 +139,6 @@ const App: React.FC = () => {
 
     fetchWeather(selectedLocation);
   }, [selectedLocation]);
-
-
 
   return (
     <div className={`app-container ${theme}`}>
