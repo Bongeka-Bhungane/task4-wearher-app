@@ -30,6 +30,18 @@ interface ForecastItem {
   }[];
 }
 
+export const convertTemperature = (
+  temp: number,
+  from: "metric" | "imperial",
+  to: "metric" | "imperial"
+): number => {
+  if (from === to) return temp;
+  return from === "metric"
+    ? (temp * 9) / 5 + 32 
+    : ((temp - 32) * 5) / 9; 
+};
+
+
 export const fetchForecast = async (
   location: Location,
   units = "metric"

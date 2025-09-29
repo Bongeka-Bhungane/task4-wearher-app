@@ -6,6 +6,7 @@ import Settings from "./components/Settings";
 import Notification from "./components/Notification";
 import WeatherApp from "./components/FetchData";
 import Nav from "./components/Nav";
+import Header from "./components/Header";
 import type {
   WeatherData,
   ForecastData,
@@ -142,9 +143,7 @@ const App: React.FC = () => {
 
   return (
     <div className={`app-container ${theme}`}>
-      <div className={`nav-container ${theme}`}>
-        <Nav />
-      </div>
+        <Header />
 
       <div className={`app-content ${theme}`}>
         <WeatherApp />
@@ -179,6 +178,8 @@ const App: React.FC = () => {
           daily={dailyForecast}
           hourly={hourlyForecast}
           view={view}
+          units={units}
+          theme={theme}
         />
       </div>
     </div>

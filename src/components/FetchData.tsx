@@ -47,7 +47,7 @@ const WeatherApp: React.FC = () => {
         return "🌧️ slightly rainy";
         
       case 63:
-        return "🌧️ modirately rainy";
+        return "🌧️ modirate rain";
 
       case 65:
         return "🌧️ haevy rain";
@@ -224,7 +224,7 @@ const WeatherApp: React.FC = () => {
       {dailyWeather.length > 0 && (
         <>
           <h3 className="city">{currentCity}</h3>
-          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
             {dailyWeather.map((day) => (
               <WeatherCard
                 key={day.date}
