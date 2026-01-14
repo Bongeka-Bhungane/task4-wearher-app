@@ -53,7 +53,7 @@ A comprehensive React-based weather application built with TypeScript, Vite, and
 1. **Clone or download the project**
    ```bash
    git clone <https://github.com/Bongeka-Bhungane/task4-wearher-app>
-   cd <wearher-app>
+   cd wearher-app
    ```
 
 2. **Install dependencies**
