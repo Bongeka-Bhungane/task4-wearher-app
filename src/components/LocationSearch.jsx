@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
+import Spinner from "./Spinner";
 import { weatherApi } from "../api/weatherApi";
 import { cacheManager } from "../utils/cacheManager";
 
 export default function LocationSearch({ onSelect }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [savedLocations, setSavedLocations] = useState([]);
 
   useEffect(() => {
@@ -17,9 +19,10 @@ export default function LocationSearch({ onSelect }) {
   const search = async (e) => {
     e.preventDefault();
     if (!query) return;
-
+    setLoading(true);
     const res = await weatherApi.searchLocation(query);
     setResults(res);
+    setLoading(false);
   };
 
   const handleSelect = (result) => {
@@ -58,41 +61,76 @@ export default function LocationSearch({ onSelect }) {
   };
 
   return (
-    <div className="search">
+    <div className="search card" style={{ marginBottom: "1.5rem" }}>
       {savedLocations.length > 0 && (
         <div className="saved-locations">
+          <h3>Saved Locations</h3>
           {savedLocations.map((loc) => (
-            <button
-              key={`${loc.lat}-${loc.lon}`}
-              onClick={() => handleSelect(loc)}
-              style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}
-            >
-              ⭐ {loc.name}, {loc.country}
+            <div className="saved-location" key={`${loc.lat}-${loc.lon}`}>
+              <span className="location-name" onClick={() => handleSelect(loc)}>
+                ⭐ {loc.name}, {loc.country}
+              </span>
               <button
                 className="remove-btn"
                 onClick={(e) => {
                   e.stopPropagation();
                   removeSavedLocation(loc.lat, loc.lon);
                 }}
+                title="Remove"
               >
-                ✕
+                &times;
               </button>
-            </button>
+            </div>
           ))}
         </div>
       )}
 
-      <form onSubmit={search}>
+      <form
+        onSubmit={search}
+        style={{
+          display: "flex",
+          gap: "0.7rem",
+          alignItems: "center",
+          marginBottom: "1rem",
+        }}
+      >
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for a city..."
           autoComplete="off"
+          style={{
+            padding: "0.7rem 1.1rem",
+            fontSize: "1.08rem",
+            borderRadius: "8px",
+            border: "1.5px solid #e0e7ef",
+            background: "#f8fafc",
+            outline: "none",
+            boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+            flex: 1,
+            transition: "border 0.18s, box-shadow 0.18s",
+          }}
         />
-        <button type="submit" style={{ whiteSpace: "nowrap" }}>
+        <button
+          type="submit"
+          style={{
+            padding: "0.7rem 1.3rem",
+            borderRadius: "8px",
+            border: "none",
+            background: "#2563eb",
+            color: "#fff",
+            fontWeight: 600,
+            fontSize: "1.08rem",
+            cursor: "pointer",
+            boxShadow: "0 1px 4px rgba(37,99,235,0.08)",
+            transition: "background 0.18s, color 0.18s, box-shadow 0.18s",
+          }}
+        >
           Search
         </button>
       </form>
+
+      {loading && <Spinner />}
 
       {results.length > 0 && (
         <div className="search-results">
@@ -103,11 +141,21 @@ export default function LocationSearch({ onSelect }) {
                 display: "flex",
                 gap: "0.5rem",
                 marginBottom: "0.25rem",
+                alignItems: "center",
               }}
             >
               <button
                 onClick={() => handleSelect(r)}
-                style={{ flex: 1, textAlign: "left" }}
+                style={{
+                  flex: 1,
+                  textAlign: "left",
+                  borderRadius: "7px",
+                  padding: "0.7em 1em",
+                  background: "#e0e7ef",
+                  border: "none",
+                  fontWeight: 500,
+                  cursor: "pointer",
+                }}
               >
                 {r.name}, {r.country}
                 {r.state && ` - ${r.state}`}
@@ -116,8 +164,14 @@ export default function LocationSearch({ onSelect }) {
                 onClick={() => addSavedLocation(r)}
                 style={{
                   whiteSpace: "nowrap",
-                  padding: "0.6em 0.75em",
-                  fontSize: "0.9rem",
+                  padding: "0.6em 0.9em",
+                  fontSize: "1rem",
+                  borderRadius: "7px",
+                  background: "#2563eb",
+                  color: "#fff",
+                  border: "none",
+                  fontWeight: 600,
+                  cursor: "pointer",
                 }}
               >
                 ⭐ Save

@@ -74,6 +74,8 @@
   padding: 0;
   min-width: auto;
   font-size: 0.8rem;
+  background: transparent;
+  border: none;
 }
 
 .search form {
