@@ -74,4 +74,3 @@ A comprehensive React-based weather application built with TypeScript, Vite, and
 3. **Save Locations**: Save searched locations for quick access
 4. **Customize Settings**: Switch between themes and temperature units in the settings tab
 5. **View Forecasts**: Toggle between hourly and daily forecast views
-6. **Monitor Alerts**: Enable notifications to receive severe weather alerts
