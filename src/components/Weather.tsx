@@ -12,22 +12,52 @@ import type {
 } from "../types";
 import { mapWeatherApiToUi } from "../utils/weatherMapper";
 
-
 type ViewMode = "hourly" | "daily";
 type ThemeMode = "light" | "dark";
 
 export default function Weather() {
   const [location, setLocation] = useState<Location | null>(null);
-  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [baseWeather, setBaseWeather] = useState<WeatherData | null>(null); // Always in Celsius
   const [unit, setUnit] = useState<TemperatureUnit>("C");
   const [theme, setTheme] = useState<ThemeMode>("light");
   const [view, setView] = useState<ViewMode>("hourly");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isDark = theme === "dark";
+
+  // Only Celsius → Fahrenheit is needed
+  const cToF = (c: number) => (c * 9) / 5 + 32;
+
+  // Compute weather for display based on unit
+  const getDisplayWeather = (): WeatherData | null => {
+    if (!baseWeather) return null;
+
+    const convertTemp = (temp: number) =>
+      unit === "F" ? Math.round(cToF(temp)) : Math.round(temp);
+
+    return {
+      current: {
+        ...baseWeather.current,
+        temperature: convertTemp(baseWeather.current.temperature),
+        feelsLike: convertTemp(baseWeather.current.feelsLike),
+      },
+      hourly: baseWeather.hourly.map((h) => ({
+        ...h,
+        temperature: convertTemp(h.temperature),
+      })),
+      daily: baseWeather.daily.map((d) => ({
+        ...d,
+        maxTemperature: convertTemp(d.maxTemperature),
+        minTemperature: convertTemp(d.minTemperature),
+      })),
+    };
+  };
+
   useEffect(() => {
-    const savedUnit = cacheManager.getPreferences("temperatureUnit");
-    const savedTheme = cacheManager.getPreferences("themeMode");
+    const savedUnit =
+      cacheManager.getPreferences<TemperatureUnit>("temperatureUnit");
+    const savedTheme = cacheManager.getPreferences<ThemeMode>("themeMode");
 
     if (savedUnit === "C" || savedUnit === "F") setUnit(savedUnit);
     if (savedTheme === "light" || savedTheme === "dark") setTheme(savedTheme);
@@ -51,44 +81,48 @@ export default function Weather() {
     );
   };
 
-const fetchWeather = async (coords: Coordinates) => {
-  try {
-    setLoading(true);
-    setError(null);
+  const fetchWeather = async (coords: Coordinates) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    const units = unit === "C" ? "metric" : "imperial";
+      // Always fetch in metric (Celsius) for consistent base
+      const place = await weatherApi.getLocationName(coords);
+      const apiData = await weatherApi.getWeatherByCoordinates(
+        coords,
+        "metric"
+      );
 
-    const place = await weatherApi.getLocationName(coords);
-    const apiData = await weatherApi.getWeatherByCoordinates(coords, units);
+      setLocation({
+        name: place.name,
+        country: place.country,
+        lat: coords.latitude,
+        lon: coords.longitude,
+      });
 
-    setLocation({
-      name: place.name,
-      country: place.country,
-      lat: coords.latitude,
-      lon: coords.longitude,
-    });
+      setBaseWeather(mapWeatherApiToUi(apiData)); // store in Celsius
+    } catch {
+      setError("Failed to fetch weather");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    setWeather(mapWeatherApiToUi(apiData));
-  } catch {
-    setError("Failed to fetch weather");
-  } finally {
-    setLoading(false);
-  }
-};
+  // Toggle theme
+  const toggleTheme = () => {
+    const next: ThemeMode = theme === "light" ? "dark" : "light";
+    setTheme(next);
+    cacheManager.setPreferences("themeMode", next);
+  };
 
-const toggleTheme = () => {
-  const next: ThemeMode = theme === "light" ? "dark" : "light";
-  setTheme(next);
-  cacheManager.setPreferences("themeMode", next);
-};
-
-  const isDark = theme === "dark";
-
+  // Toggle unit (C ↔ F)
   const toggleUnit = () => {
     const next: TemperatureUnit = unit === "C" ? "F" : "C";
     setUnit(next);
     cacheManager.setPreferences("temperatureUnit", next);
   };
+
+  const weather = getDisplayWeather();
 
   return (
     <div className={`app ${theme}`}>
@@ -111,15 +145,18 @@ const toggleTheme = () => {
             <h2>
               {location?.name}, {location?.country}
             </h2>
+
             <div className="temperature">
-              {Math.round(weather.current.temperature)}°
+              {weather.current.temperature}°
             </div>
-            <p className="description">{weather.current.description}</p>
+            <p className="description">
+              {weather.current.description}
+            </p>
 
             <div className="weather-details">
               <div className="detail-card">
                 <p>Feels Like</p>
-                <p>{Math.round(weather.current.feelsLike)}°</p>
+                <p>{weather.current.feelsLike}°</p>
               </div>
               <div className="detail-card">
                 <p>Humidity</p>
