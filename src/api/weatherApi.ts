@@ -1,3 +1,30 @@
+export interface HourlyForecastItem {
+  timestamp: number;
+  main: string;
+  temperature: number;
+  humidity: number;
+}
+
+export interface DailyForecastItem {
+  date: string;
+  main: string;
+  maxTemperature: number;
+  minTemperature: number;
+}
+
+export interface WeatherApiResponse {
+  current: {
+    temperature: number;
+    feelsLike: number;
+    humidity: number;
+    windSpeed: number;
+    pressure: number;
+    description: string;
+  };
+  hourly: HourlyForecastItem[];
+  daily: DailyForecastItem[];
+}
+
 export interface Coordinates {
   latitude: number;
   longitude: number;
@@ -18,30 +45,6 @@ export interface CurrentWeather {
   description: string;
   icon: string;
   main: string;
-}
-
-export interface HourlyForecastItem {
-  timestamp: number;
-  temperature: number;
-  feelsLike: number;
-  humidity: number;
-  windSpeed: number;
-  description: string;
-  icon: string;
-  main: string;
-  precipitation: number;
-}
-
-export interface DailyForecastItem {
-  date: string;
-  minTemperature: number;
-  maxTemperature: number;
-  humidity: number;
-  windSpeed: number;
-  description: string;
-  icon: string;
-  main: string;
-  precipitation: number;
 }
 
 export interface ForecastData {

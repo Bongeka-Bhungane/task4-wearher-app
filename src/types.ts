@@ -1,62 +1,58 @@
-// types.ts
-export interface Location {
-  name: string;
-  lat: number;
-  lon: number;
-  isCurrentLocation?: boolean; 
+export type TemperatureUnit = "C" | "F";
+
+export type WeatherMain =
+  | "Clear"
+  | "Clouds"
+  | "Rain"
+  | "Drizzle"
+  | "Thunderstorm"
+  | "Snow"
+  | "Mist"
+  | "Smoke"
+  | "Haze"
+  | "Dust"
+  | "Fog"
+  | "Sand"
+  | "Ash"
+  | "Squall"
+  | "Tornado";
+
+export interface DailyWeather {
+  date: string;
+  main: WeatherMain;
+  maxTemperature: number;
+  minTemperature: number;
+}
+
+export interface HourlyWeather {
+  timestamp: number;
+  main: WeatherMain;
+  temperature: number;
+  humidity: number;
 }
 
 export interface WeatherData {
-  temperature: number;
-  description: string;
-  humidity: number;
-  windSpeed: number;
-  icon?: string;
-}
-
-export interface ForecastData {
-  date: string;
-  temp: number; 
-  tempMax?: number; 
-  tempMin?: number; 
-  description: string;
-  weatherCode: number;
-  humidity?: number;
-  windSpeed?: number;
-}
-
-
-export interface HourlyForecastData {
-  date: string;
-  time: string;
-  temp: number; 
-  description: string;
-  weatherCode: number;
-  humidity?: number;
-  windSpeed?: number;
-}
-
-
-
-export interface ApiDaily {
-  dt: number;
-  temp: { day: number };
-  weather: { description: string; icon: string }[];
-}
-
-export interface ApiHourly {
-  dt: number;
-  temp: number;
-  weather: { description: string; icon: string }[];
-}
-
-interface HourlyForecastItem {
-  dt_txt: string;
-  main: {
-    temp: number;
-  };
-  weather: {
+  current: {
+    temperature: number;
+    feelsLike: number;
+    humidity: number;
+    windSpeed: number;
+    pressure: number;
     description: string;
-    icon: string;
-  }[];
+  };
+  hourly: HourlyWeather[];
+  daily: DailyWeather[];
+}
+
+export interface Location {
+  name: string;
+  country: string;
+  lat: number;
+  lon: number;
+  state?: string;
+}
+
+export interface Coordinates {
+  latitude: number;
+  longitude: number;
 }

@@ -4,24 +4,33 @@ import { cacheManager } from "../utils/cacheManager";
 import HourlyForecast from "./HourlyForecast";
 import DailyForecast from "./DailyForecast";
 import LocationSearch from "./LocationSearch";
+import type {
+  WeatherData,
+  TemperatureUnit,
+  Coordinates,
+  Location,
+} from "../types";
+import { mapWeatherApiToUi } from "../utils/weatherMapper";
+
+
+type ViewMode = "hourly" | "daily";
+type ThemeMode = "light" | "dark";
 
 export default function Weather() {
-  const [location, setLocation] = useState(null);
-  const [weather, setWeather] = useState(null);
-  const [unit, setUnit] = useState("C");
-  const [theme, setTheme] = useState("light");
-  const [view, setView] = useState("hourly");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const isDark = theme === "dark";
+  const [location, setLocation] = useState<Location | null>(null);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [unit, setUnit] = useState<TemperatureUnit>("C");
+  const [theme, setTheme] = useState<ThemeMode>("light");
+  const [view, setView] = useState<ViewMode>("hourly");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const savedUnit = cacheManager.getPreferences("temperatureUnit");
     const savedTheme = cacheManager.getPreferences("themeMode");
 
-    if (savedUnit) setUnit(savedUnit);
-    if (savedTheme) setTheme(savedTheme);
+    if (savedUnit === "C" || savedUnit === "F") setUnit(savedUnit);
+    if (savedTheme === "light" || savedTheme === "dark") setTheme(savedTheme);
 
     requestUserLocation();
   }, []);
@@ -30,12 +39,11 @@ export default function Weather() {
     setLoading(true);
 
     navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        await fetchWeather({
+      (pos) =>
+        fetchWeather({
           latitude: pos.coords.latitude,
           longitude: pos.coords.longitude,
-        });
-      },
+        }),
       () => {
         setError("Location access denied");
         setLoading(false);
@@ -43,32 +51,41 @@ export default function Weather() {
     );
   };
 
-  const fetchWeather = async (coords) => {
-    try {
-      setLoading(true);
-      setError(null);
+const fetchWeather = async (coords: Coordinates) => {
+  try {
+    setLoading(true);
+    setError(null);
 
-      const units = unit === "C" ? "metric" : "imperial";
-      const place = await weatherApi.getLocationName(coords);
-      const data = await weatherApi.getWeatherByCoordinates(coords, units);
+    const units = unit === "C" ? "metric" : "imperial";
 
-      setLocation(place);
-      setWeather(data);
-    } catch {
-      setError("Failed to fetch weather");
-    } finally {
-      setLoading(false);
-    }
-  };
+    const place = await weatherApi.getLocationName(coords);
+    const apiData = await weatherApi.getWeatherByCoordinates(coords, units);
 
-  const toggleTheme = () => {
-    const next = theme === "light" ? "dark" : "light";
-    setTheme(next);
-    cacheManager.setPreferences("themeMode", next);
-  };
+    setLocation({
+      name: place.name,
+      country: place.country,
+      lat: coords.latitude,
+      lon: coords.longitude,
+    });
+
+    setWeather(mapWeatherApiToUi(apiData));
+  } catch {
+    setError("Failed to fetch weather");
+  } finally {
+    setLoading(false);
+  }
+};
+
+const toggleTheme = () => {
+  const next: ThemeMode = theme === "light" ? "dark" : "light";
+  setTheme(next);
+  cacheManager.setPreferences("themeMode", next);
+};
+
+  const isDark = theme === "dark";
 
   const toggleUnit = () => {
-    const next = unit === "C" ? "F" : "C";
+    const next: TemperatureUnit = unit === "C" ? "F" : "C";
     setUnit(next);
     cacheManager.setPreferences("temperatureUnit", next);
   };
@@ -77,7 +94,7 @@ export default function Weather() {
     <div className={`app ${theme}`}>
       <header className="header">
         <h1>Weather</h1>
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div className="actions" style={{ display: "flex", gap: "0.5rem" }}>
           <button onClick={toggleUnit}>°{unit}</button>
           <button onClick={toggleTheme}>{isDark ? "☀️" : "🌙"}</button>
         </div>

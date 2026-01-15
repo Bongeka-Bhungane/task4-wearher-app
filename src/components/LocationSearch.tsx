@@ -1,50 +1,52 @@
 import { useState, useEffect } from "react";
+import type { FormEvent } from "react";
 import Spinner from "./Spinner";
 import { weatherApi } from "../api/weatherApi";
 import { cacheManager } from "../utils/cacheManager";
+import type { Location, Coordinates } from "../types";
 
-export default function LocationSearch({ onSelect }) {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [savedLocations, setSavedLocations] = useState([]);
+type Props = {
+  onSelect: (coords: Coordinates) => void;
+};
+
+export default function LocationSearch({ onSelect }: Props) {
+  const [query, setQuery] = useState<string>("");
+  const [results, setResults] = useState<Location[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [savedLocations, setSavedLocations] = useState<Location[]>([]);
 
   useEffect(() => {
     const saved = cacheManager.getPreferences("savedLocations");
     if (saved) {
-      setSavedLocations(JSON.parse(saved));
+      setSavedLocations(
+        typeof saved === "string" ? JSON.parse(saved) : saved
+      );
     }
   }, []);
 
-  const search = async (e) => {
+  const search = async (e: FormEvent) => {
     e.preventDefault();
     if (!query) return;
+
     setLoading(true);
-    const res = await weatherApi.searchLocation(query);
+    const res: Location[] = await weatherApi.searchLocation(query);
     setResults(res);
     setLoading(false);
   };
 
-  const handleSelect = (result) => {
+  const handleSelect = (result: Location) => {
     onSelect({ latitude: result.lat, longitude: result.lon });
     setQuery("");
     setResults([]);
   };
 
-  const addSavedLocation = (result) => {
-    const newLocation = {
-      name: result.name,
-      country: result.country,
-      lat: result.lat,
-      lon: result.lon,
-    };
-
-    const locationExists = savedLocations.some(
-      (loc) => loc.lat === result.lat && loc.lon === result.lon
+  const addSavedLocation = (result: Location) => {
+    const exists = savedLocations.some(
+      (l) => l.lat === result.lat && l.lon === result.lon
     );
 
-    if (!locationExists) {
-      const updated = [...savedLocations, newLocation];
+    if (!exists) {
+      const updated = [...savedLocations, result];
       setSavedLocations(updated);
       cacheManager.setPreferences("savedLocations", JSON.stringify(updated));
     }
@@ -52,36 +54,41 @@ export default function LocationSearch({ onSelect }) {
     handleSelect(result);
   };
 
-  const removeSavedLocation = (lat, lon) => {
-    const updated = savedLocations.filter(
-      (loc) => !(loc.lat === lat && loc.lon === lon)
-    );
-    setSavedLocations(updated);
-    cacheManager.setPreferences("savedLocations", JSON.stringify(updated));
-  };
+   const removeSavedLocation = (lat: number, lon: number) => {
+     const updated = savedLocations.filter(
+       (l) => !(l.lat === lat && l.lon === lon)
+     );
+     setSavedLocations(updated);
+     cacheManager.setPreferences("savedLocations", JSON.stringify(updated));
+   };
 
   return (
     <div className="search card" style={{ marginBottom: "1.5rem" }}>
       {savedLocations.length > 0 && (
         <div className="saved-locations">
           <h3>Saved Locations</h3>
-          {savedLocations.map((loc) => (
-            <div className="saved-location" key={`${loc.lat}-${loc.lon}`}>
-              <span className="location-name" onClick={() => handleSelect(loc)}>
-                ⭐ {loc.name}, {loc.country}
-              </span>
-              <button
-                className="remove-btn"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeSavedLocation(loc.lat, loc.lon);
-                }}
-                title="Remove"
-              >
-                &times;
-              </button>
-            </div>
-          ))}
+          <div className="locations">
+            {savedLocations.map((loc) => (
+              <div className="saved-location" key={`${loc.lat}-${loc.lon}`}>
+                <span
+                  className="location-name"
+                  onClick={() => handleSelect(loc)}
+                >
+                  ⭐ {loc.name}, {loc.country}
+                </span>
+                <button
+                  className="remove-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeSavedLocation(loc.lat, loc.lon);
+                  }}
+                  title="Remove"
+                >
+                  &times;
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
